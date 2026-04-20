@@ -10,18 +10,19 @@ public:
 	               head_(nullptr) {
 	}
 
-	LinkedList(const LinkedList &other) : size_(other.size_) {
+	LinkedList(const LinkedList &other) : size_(other.size_),
+	                                      head_(nullptr) {
 		if (other.head_ == nullptr) {
 			return;
 		}
 
-		head_ = new Node<T>;
+		head_ = new Node;
 		head_->data = other.head_->data;
 
-		Node<T> *otherNode = other.head_->nextNode;
-		Node<T> *node = head_;
+		Node *otherNode = other.head_->nextNode;
+		Node *node = head_;
 		while (otherNode != nullptr) {
-			node->nextNode = new Node<T>;
+			node->nextNode = new Node;
 			node->nextNode->data = otherNode->data;
 
 			node = node->nextNode;
@@ -46,9 +47,9 @@ public:
 	LinkedList &operator=(LinkedList &&other) noexcept {
 		if (this != &other) {
 			// delete all our nodes
-			Node<T>* node = head_;
+			Node *node = head_;
 			while (node != nullptr) {
-				Node<T>* nodeToDelete = node;
+				Node *nodeToDelete = node;
 				node = node->nextNode;
 				delete nodeToDelete;
 			}
@@ -65,9 +66,9 @@ public:
 	}
 
 	~LinkedList() {
-		Node<T>* node = head_;
+		Node * node = head_;
 		while (node != nullptr) {
-			Node<T>* nodeToDelete = node;
+			Node *nodeToDelete = node;
 			node = node->nextNode;
 			delete nodeToDelete;
 		}
@@ -79,26 +80,27 @@ public:
 
 	// to add new element in the beginning of the list
 	// Difficulty: O(1)
-	void add(const T& element) {
-		Node<T>* newNode = new Node<T>();
+	void add(const T &element) {
+		Node *newNode = new Node();
 		newNode->data = element;
 		newNode->nextNode = head_;
 		head_ = newNode;
+		++size_;
 	}
 
 	// to add new element after element with some index
 	// Difficulty: O(n)
-	void add(size_t index, const T& element) {
+	void add(const size_t index, const T &element) {
 		if (index >= size_) {
 			throw std::runtime_error("Error: index out of bounds.");
 		}
 
-		Node<T>* node = head_;
-		for (int i = 0; i < index; ++i) {
+		Node *node = head_;
+		for (size_t i = 0; i < index; ++i) {
 			node = node->nextNode;
 		}
 
-		Node<T>* newNode = new Node<T>;
+		Node *newNode = new Node;
 		newNode->data = element;
 		newNode->nextNode = node->nextNode;
 		node->nextNode = newNode;
@@ -107,14 +109,22 @@ public:
 
 
 	// Difficulty: O(n)
-	void remove(size_t index) {
+	void remove(const size_t index) {
 		if (index >= size_) {
 			throw std::runtime_error("Error: index out of bounds.");
 		}
 
-		Node<T>* node = head_;
-		Node<T>* prevNode = nullptr;
-		for (int i = 0; i < index; ++i) {
+		if (index == 0) {
+			Node *nodeToDelete = head_;
+			head_ = head_->nextNode;
+			delete nodeToDelete;
+			--size_;
+			return;
+		}
+
+		Node *node = head_;
+		Node *prevNode = nullptr;
+		for (size_t i = 0; i < index; ++i) {
 			prevNode = node;
 			node = node->nextNode;
 		}
@@ -122,27 +132,55 @@ public:
 		// after loop above we have
 		// node - node to delete
 		// prevNode - the node before the node to delete
-		if (prevNode != nullptr) {
-			prevNode->nextNode = node->nextNode;
-		}
+		prevNode->nextNode = node->nextNode;
 		delete node;
+		--size_;
 	}
 
+	T get(const size_t index) const {
+		if (index >= size_) {
+			throw std::runtime_error("Error: index out of bounds.");
+		}
+
+		Node *node = head_;
+		for (size_t i = 0; i < index; ++i) {
+			node = node->nextNode;
+		}
+		return node->data;
+	}
+
+	template<typename T1>
+	friend std::ostream &operator<<(std::ostream &, const LinkedList<T1> &);
+
 private:
-	template<class T1>
 	struct Node {
 	public:
-		T1 data;
-		Node<T1> *nextNode;
+		T data;
+		Node *nextNode = nullptr;
 	};
 
 	size_t size_ = 0;
-	Node<T> *head_ = nullptr;
+	Node *head_ = nullptr;
 
 	void swap(LinkedList &other) noexcept {
 		std::swap(size_, other.size_);
 		std::swap(head_, other.head_);
 	}
 };
+
+template<class T>
+std::ostream &operator<<(std::ostream &os, const LinkedList<T> &linkedList) {
+	std::ostream::sentry s(os);
+	if (!s) {
+		return os;
+	}
+
+	typename LinkedList<T>::Node *node = linkedList.head_;
+	for (size_t i = 0; i < linkedList.size_; ++i) {
+		os << node->data << " ";
+		node = node->nextNode;
+	}
+	return os;
+}
 
 #endif //LINKED_LIST_HPP
