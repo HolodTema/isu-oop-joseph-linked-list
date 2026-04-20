@@ -7,10 +7,10 @@
 
 LinkedList<int> generateLinkedList(size_t size);
 
-int iosifTest(LinkedList<int>& linkedList, size_t step);
+int josephusTest(LinkedList<int>& linkedList, size_t step);
 
-void iosifTestBundle(const LinkedList<int>& sizes, size_t step, std::ostream& os);
+void josephusTestBundle(const LinkedList<int>& sizes, size_t step, std::ostream& os);
 
-void iosifTestCli(std::istream& is, std::ostream& os);
+void josephusTestCli(std::istream& is, std::ostream& os);
 
 #endif

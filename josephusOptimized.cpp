@@ -1,8 +1,8 @@
-#include "josephus.hpp"
+#include "josephusOptimized.hpp"
 #include <chrono>
 #include "LinkedList.hpp"
 
-LinkedList<int> generateLinkedList(size_t size)
+LinkedList<int> generateLinkedListOptimized(size_t size)
 {
     LinkedList<int> linkedList;
     for (size_t i = size; i > 0; --i)
@@ -13,35 +13,38 @@ LinkedList<int> generateLinkedList(size_t size)
 }
 
 
-int josephusTest(LinkedList<int>& linkedList, size_t step)
+int josephusTestOptimized(LinkedList<int>& linkedList, size_t step)
 {
-    size_t index = 0;
-    
+    LinkedList<int>::Iterator it = linkedList.begin();
+
     while (linkedList.getSize() > 1)
     {
-        index = (index + step - 1) % linkedList.getSize();
-        linkedList.remove(index);
-    }
+        for (size_t i = 0; i < (step-1); ++i) {
+            ++it;
+        }
+        it.removeCurrentAndStepForward();
+    } 
     return linkedList.get(0);
 }
 
 
-void josephusTestBundle(const LinkedList<int>& sizes, size_t step, std::ostream& os)
+void josephusTestBundleOptimized(const LinkedList<int>& sizes, size_t step, std::ostream& os)
 {
     int answer = 0;
     long long time = 0;
 
+    os << "Optimized Josephus test for LinkedList\n";
     os << "N\t\t\tAnswer\t\t\tTime (microseconds)\n";
 
     for (int i = 0; i < sizes.getSize(); ++i)
     {
-        LinkedList<int> generatedList = generateLinkedList(sizes.get(i));
+        LinkedList<int> generatedList = generateLinkedListOptimized(sizes.get(i));
         
         os << sizes.get(i) << "\t\t\t";
         
         auto startTime = std::chrono::high_resolution_clock::now();
 
-        answer = josephusTest(generatedList, step);
+        answer = josephusTestOptimized(generatedList, step);
         
         auto endTime = std::chrono::high_resolution_clock::now();
         auto durationMicros = std::chrono::duration_cast<std::chrono::microseconds>(endTime - startTime);
@@ -52,12 +55,12 @@ void josephusTestBundle(const LinkedList<int>& sizes, size_t step, std::ostream&
     }
 }
 
-void josephusTestCli(std::istream& is, std::ostream& os)
+void josephusTestCliOptimized(std::istream& is, std::ostream& os)
 {
     size_t n = 0;
     size_t step = 0;
 
-    os  << "Flavius Josephus test CLI\n";
+    os  << "Flavius Josephus test CLI (Optimized for Linked list)\n";
     os << "Enter N:\n";
     is >> n;
     os << "Enter step (k):\n";
@@ -65,10 +68,10 @@ void josephusTestCli(std::istream& is, std::ostream& os)
 
     os << "Starting test...\n";
 
-    LinkedList<int> generatedList = generateLinkedList(n);
+    LinkedList<int> generatedList = generateLinkedListOptimized(n);
         
     auto startTime = std::chrono::high_resolution_clock::now();
-    int answer = josephusTest(generatedList, step);
+    int answer = josephusTestOptimized(generatedList, step);
     auto endTime = std::chrono::high_resolution_clock::now();
     auto durationMicros = std::chrono::duration_cast<std::chrono::microseconds>(endTime - startTime);
     long long time = durationMicros.count();

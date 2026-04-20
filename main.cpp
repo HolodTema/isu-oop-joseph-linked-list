@@ -2,7 +2,7 @@
 #include <string>
 #include <stdexcept>
 #include "LinkedList.hpp"
-#include "josephus.hpp"
+#include "josephusOptimized.hpp"
 
 
 void testAddAndGet() {
@@ -151,6 +151,6 @@ void tests() {
 int main() {
     //tests();
 
-    iosifTestCli(std::cin, std::cout);
+    josephusTestCliOptimized(std::cin, std::cout);
     return 0;
 }

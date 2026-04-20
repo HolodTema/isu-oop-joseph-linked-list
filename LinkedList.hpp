@@ -5,7 +5,86 @@
 
 template<class T>
 class LinkedList {
+private:
+	struct Node {
+	public:
+		T data;
+		Node *nextNode = nullptr;
+	};
+
+	size_t size_ = 0;
+	Node *head_ = nullptr;
+
+	void swap(LinkedList &other) noexcept {
+		std::swap(size_, other.size_);
+		std::swap(head_, other.head_);
+	}
+
+
 public:
+
+	class Iterator {
+	public:
+
+		Iterator(LinkedList& parentList, Node* prevNode, Node* currNode):
+			parentList_(parentList),
+			prevNode_(prevNode),
+			currNode_(currNode)
+		{
+
+		}
+
+		void removeCurrentAndStepForward() {
+			//if we at the first element:
+			if (prevNode_ == nullptr) {
+				parentList_.head_ = currNode_->nextNode;
+				delete currNode_;
+				currNode_ = parentList_.head_;
+				--parentList_.size_;
+				return;
+			}
+
+			//if we at the last element:
+			if (currNode_->nextNode == nullptr) {
+				delete currNode_;
+				currNode_ = parentList_.head_;
+				prevNode_->nextNode = nullptr;
+				--parentList_.size_;
+				return;
+			}
+
+			// in other cases:
+			currNode_ = currNode_->nextNode;
+			delete (prevNode_->nextNode);
+			prevNode_->nextNode = currNode_;
+			--parentList_.size_;
+		}
+
+		// prefix increment to move forward in cycle
+		Iterator& operator++() {
+			prevNode_ = currNode_;
+			currNode_ = currNode_->nextNode;
+
+			//if we iterated to the end of the list, we go to head again
+			if (currNode_ == nullptr) {
+				prevNode_ = nullptr;
+				currNode_ = parentList_.head_;
+			}
+			return *this;
+		}
+
+		T operator*() {
+			return currNode_->data;
+		}
+
+	private:
+		LinkedList& parentList_;
+		Node* prevNode_ = nullptr;
+		Node* currNode_ = nullptr;
+	};
+
+
+
 	LinkedList() : size_(0),
 	               head_(nullptr) {
 	}
@@ -149,23 +228,12 @@ public:
 		return node->data;
 	}
 
+	Iterator begin() {
+		return Iterator(*this, nullptr, head_);
+	}
+
 	template<typename T1>
 	friend std::ostream &operator<<(std::ostream &, const LinkedList<T1> &);
-
-private:
-	struct Node {
-	public:
-		T data;
-		Node *nextNode = nullptr;
-	};
-
-	size_t size_ = 0;
-	Node *head_ = nullptr;
-
-	void swap(LinkedList &other) noexcept {
-		std::swap(size_, other.size_);
-		std::swap(head_, other.head_);
-	}
 };
 
 template<class T>
