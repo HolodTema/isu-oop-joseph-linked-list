@@ -2,6 +2,7 @@
 #include <string>
 #include <stdexcept>
 #include "LinkedList.hpp"
+#include "josephus.hpp"
 
 
 void testAddAndGet() {
@@ -137,7 +138,7 @@ void testMoveAssignmentOperator() {
     std::cout << "##########\n\n";
 }
 
-int main() {
+void tests() {
     testAddAndGet();
     testRemove();
     testOutOfBounds();
@@ -145,5 +146,11 @@ int main() {
     testMoveConstructor();
     testCopyAssignmentOperator();
     testMoveAssignmentOperator();
+}
+
+int main() {
+    //tests();
+
+    iosifTestCli(std::cin, std::cout);
     return 0;
 }
