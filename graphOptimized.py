@@ -19,9 +19,9 @@ print(microsTheoryMNK)
 plt.figure(figsize=(20, 12))
 
 # graph of real time
-plt.plot(sizes, microsecondsReal, 'o-', label='real perfomance', color='blue', linewidth=3)
+plt.plot(sizes, microsecondsReal, 'o-', label='реальная сложность', color='blue', linewidth=3)
 
-plt.plot(sizes, microsTheoryMNK, 'o-', label=f'theoretical performance = k*n^2 where k = {k}', color='red')
+plt.plot(sizes, microsTheoryMNK, 'o-', label=f'Теоретическая временная сложность = k*n*3 где k = {k}', color='red')
 
 plt.title("Тест Иосифа-Флавия для C++ LinkedList (циклическая итерация)", fontsize=14)
 plt.xlabel("Число элементов (N)", fontsize=12)
